@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>For My Wifey</title>
+<link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Dancing+Script:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #ff6b9d;
+    --deep-pink: #e83e8c;
+    --gold: #f6c90e;
+    --cream: #fff8f0;
+    --vintage: #f5e6c8;
+    --ink: #4a3728;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    font-family: 'Cormorant Garamond', serif;
+    background: linear-gradient(135deg, #1a0a14 0%, #3d1a2e 40%, #5c2a45 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+    color: #fff;
+    touch-action: manipulation;
+  }
+
+  /* ========== FLOATING DECORATIONS ========== */
+  .floating-container {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    overflow: hidden;
+  }
+
+  .petal, .sunflower, .arrow-deco, .heart-float {
+    position: absolute;
+    opacity: 0.7;
+    animation: floatUp linear infinite;
+  }
+
+  .petal {
+    width: 18px;
+    height: 18px;
+    background: radial-gradient(circle at 30% 30%, #ff9eb5, #ff4d7a);
+    border-radius: 50% 0 50% 50%;
+    transform: rotate(45deg);
+  }
+
+  .sunflower {
+    font-size: 22px;
+    filter: drop-shadow(0 0 4px gold);
+  }
+
+  .arrow-deco {
+    font-size: 20px;
+    opacity: 0.5;
+  }
+
+  .heart-float {
+    font-size: 16px;
+    color: #ff6b9d;
+  }
+
+  @keyframes floatUp {
+    0% { transform: translateY(100vh) rotate(0deg) scale(0.8); opacity: 0; }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.6; }
+    100% { transform: translateY(-10vh) rotate(360deg) scale(1.1); opacity: 0; }
+  }
+
+  /* ========== SCREENS ========== */
+  .screen {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 10;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease, visibility 0.6s;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .screen.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  /* ========== HOME SCREEN ========== */
+  #home {
+    background: transparent;
+  }
+
+  .title {
+    font-family: 'Great Vibes', cursive;
+    font-size: clamp(2.4rem, 8vw, 3.8rem);
+    text-align: center;
+    margin-bottom: 8px;
+    background: linear-gradient(90deg, #ff9eb5, #ffd1dc, #fff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(255,107,157,0.4);
+    animation: pulseGlow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulseGlow {
+    0%, 100% { filter: brightness(1); }
+    50% { filter: brightness(1.15); }
+  }
+
+  .subtitle {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.25rem;
+    color: #ffc2d4;
+    margin-bottom: 30px;
+    text-align: center;
+    opacity: 0.9;
+  }
+
+  .instruction {
+    font-size: 0.95rem;
+    color: #ffb6c9;
+    text-align: center;
+    margin-bottom: 25px;
+    max-width: 320px;
+    line-height: 1.4;
+  }
+
+  /* Gift boxes */
+  .gifts-row {
+    display: flex;
+    gap: 28px;
+    margin: 20px 0 40px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .gift-box {
+    width: 130px;
+    height: 130px;
+    background: linear-gradient(145deg, #ff8fab, #ff4d7a);
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(255,77,122,0.4),
+                inset 0 0 20px rgba(255,255,255,0.2);
+    transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+                box-shadow 0.35s;
+    border: 3px solid rgba(255,255,255,0.3);
+  }
+
+  .gift-box.locked {
+    filter: grayscale(0.4) brightness(0.85);
+    opacity: 0.85;
+  }
+
+  .gift-box.unlocked {
+    animation: unlockPulse 1.2s ease;
+  }
+
+  @keyframes unlockPulse {
+    0% { transform: scale(1); }
+    40% { transform: scale(1.15); box-shadow: 0 0 40px #ffd700; }
+    100% { transform: scale(1); }
+  }
+
+  .gift-box:active {
+    transform: scale(0.95);
+  }
+
+  .gift-box .bow {
+    font-size: 2.4rem;
+    margin-bottom: 4px;
+  }
+
+  .gift-box .label {
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+
+  .gift-box .lock-icon {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 1.1rem;
+    opacity: 0.9;
+  }
+
+  .gift-box.unlocked .lock-icon {
+    display: none;
+  }
+
+  /* Cupid bow area */
+  .bow-area {
+    margin-top: 10px;
+    text-align: center;
+  }
+
+  .bow-btn {
+    background: linear-gradient(145deg, #ff6b9d, #c44569);
+    border: none;
+    color: white;
+    padding: 14px 28px;
+    border-radius: 50px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.3rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(255,107,157,0.5);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .bow-btn:active {
+    transform: scale(0.96);
+  }
+
+  .bow-btn.active {
+    background: linear-gradient(145deg, #f6c90e, #e6b800);
+    color: #3d1a2e;
+    box-shadow: 0 0 25px rgba(246,201,14,0.6);
+  }
+
+  .aim-hint {
+    font-size: 0.85rem;
+    color: #ffc2d4;
+    margin-top: 12px;
+    opacity: 0;
+    transition: opacity 0.4s;
+  }
+
+  .aim-hint.show {
+    opacity: 1;
+  }
+
+  /* Arrow projectile */
+  .arrow {
+    position: fixed;
+    font-size: 28px;
+    z-index: 100;
+    pointer-events: none;
+    transition: transform 0.8s cubic-bezier(0.2, 0.8, 0.3, 1);
+  }
+
+  /* ========== LETTER SCREEN (Gift 1) ========== */
+  #letter {
+    background: linear-gradient(180deg, #2c1810 0%, #4a2c1a 50%, #3d2415 100%);
+    padding: 0;
+    justify-content: flex-start;
+  }
+
+  .letter-wrapper {
+    width: 100%;
+    max-width: 480px;
+    margin: 20px auto 40px;
+    padding: 0 16px;
+  }
+
+  .paper {
+    background: linear-gradient(180deg, #f8ecd4 0%, #f0e0c0 40%, #e8d4a8 100%);
+    border-radius: 4px;
+    padding: 36px 28px 48px;
+    box-shadow: 
+      0 0 0 1px rgba(139,105,20,0.3),
+      0 15px 40px rgba(0,0,0,0.4),
+      inset 0 0 60px rgba(180,140,60,0.15);
+    position: relative;
+    color: var(--ink);
+    overflow: hidden;
+  }
+
+  .paper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse at 20% 30%, rgba(180,140,60,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 70%, rgba(160,120,50,0.06) 0%, transparent 40%);
+    pointer-events: none;
+  }
+
+  .paper-header {
+    text-align: center;
+    margin-bottom: 24px;
+    position: relative;
+  }
+
+  .paper-header .rose {
+    font-size: 1.6rem;
+    margin: 0 6px;
+  }
+
+  .paper-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.4rem;
+    color: #8b4513;
+    margin: 8px 0;
+  }
+
+  .letter-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    line-height: 1.75;
+    text-align: justify;
+    white-space: pre-wrap;
+    position: relative;
+    z-index: 2;
+  }
+
+  .letter-text p {
+    margin-bottom: 1.1em;
+  }
+
+  .signature {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.8rem;
+    text-align: right;
+    margin-top: 28px;
+    color: #8b4513;
+  }
+
+  .back-btn {
+    display: block;
+    margin: 28px auto 20px;
+    background: linear-gradient(145deg, #c44569, #8b2e4a);
+    color: white;
+    border: none;
+    padding: 12px 32px;
+    border-radius: 50px;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.25rem;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+    transition: transform 0.2s;
+  }
+
+  .back-btn:active {
+    transform: scale(0.96);
+  }
+
+  /* Floating hearts on letter */
+  .letter-hearts {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* ========== PASSWORD SCREEN (Gift 2) ========== */
+  #password {
+    background: linear-gradient(160deg, #1a0a14, #4a1a35);
+  }
+
+  .lock-card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,182,193,0.25);
+    border-radius: 24px;
+    padding: 36px 28px;
+    width: 100%;
+    max-width: 340px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.4);
+  }
+
+  .lock-icon-big {
+    font-size: 3.5rem;
+    margin-bottom: 12px;
+    animation: bounceSoft 2s ease-in-out infinite;
+  }
+
+  @keyframes bounceSoft {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-8px); }
+  }
+
+  .lock-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.2rem;
+    margin-bottom: 8px;
+    color: #ffb6c9;
+  }
+
+  .lock-hint {
+    font-size: 0.95rem;
+    color: #ffc2d4;
+    margin-bottom: 24px;
+    opacity: 0.85;
+  }
+
+  .pin-input {
+    width: 100%;
+    padding: 14px;
+    font-size: 1.6rem;
+    letter-spacing: 12px;
+    text-align: center;
+    border: 2px solid rgba(255,182,193,0.4);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.1);
+    color: white;
+    font-family: 'Cormorant Garamond', serif;
+    outline: none;
+    margin-bottom: 18px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .pin-input:focus {
+    border-color: #ff6b9d;
+    box-shadow: 0 0 20px rgba(255,107,157,0.3);
+  }
+
+  .pin-btn {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(145deg, #ff6b9d, #e83e8c);
+    border: none;
+    border-radius: 14px;
+    color: white;
+    font-family: 'Dancing Script', cursive;
+    font-size: 1.35rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(255,107,157,0.4);
+    transition: transform 0.2s;
+  }
+
+  .pin-btn:active {
+    transform: scale(0.97);
+  }
+
+  .error-msg {
+    color: #ff8a8a;
+    font-size: 0.9rem;
+    margin-top: 12px;
+    height: 20px;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .error-msg.show {
+    opacity: 1;
+  }
+
+  /* ========== MESSAGE SCREEN (Gift 2 content) ========== */
+  #message {
+    background: linear-gradient(180deg, #2a0a1f 0%, #4a1a35 60%, #3d1528 100%);
+    padding: 0;
+    justify-content: flex-start;
+  }
+
+  .msg-card {
+    width: 100%;
+    max-width: 440px;
+    margin: 30px auto 40px;
+    padding: 0 18px;
+  }
+
+  .msg-paper {
+    background: linear-gradient(145deg, #fff0f5, #ffe4ec);
+    border-radius: 20px;
+    padding: 36px 26px 44px;
+    box-shadow: 0 15px 45px rgba(0,0,0,0.35);
+    position: relative;
+    overflow: hidden;
+    color: #4a1a2e;
+  }
+
+  .msg-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.3rem;
+    text-align: center;
+    color: #c44569;
+    margin-bottom: 20px;
+  }
+
+  .msg-text {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    line-height: 1.8;
+    text-align: center;
+    white-space: pre-wrap;
+  }
+
+  .msg-hearts {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  /* ========== UTIL ========== */
+  .hidden { display: none !important; }
+
+  @media (max-width: 380px) {
+    .gift-box { width: 115px; height: 115px; }
+    .letter-text { font-size: 0.98rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Floating decorations -->
+<div class="floating-container" id="floaters"></div>
+
+<!-- ========== HOME ========== -->
+<div class="screen active" id="home">
+  <h1 class="title">For My Wifey</h1>
+  <p class="subtitle">A little surprise from hubby</p>
+  <p class="instruction">Tap the bow, then tap a gift box to shoot a cupid arrow & unlock it</p>
+
+  <div class="gifts-row">
+    <div class="gift-box locked" id="gift1" data-gift="1">
+      <span class="lock-icon">🔒</span>
+      <div class="bow">🎁</div>
+      <div class="label">Letter</div>
+    </div>
+    <div class="gift-box locked" id="gift2" data-gift="2">
+      <span class="lock-icon">🔒</span>
+      <div class="bow">🎁</div>
+      <div class="label">Secret</div>
+    </div>
+  </div>
+
+  <div class="bow-area">
+    <button class="bow-btn" id="bowBtn">🏹 Equip Cupid Bow</button>
+    <p class="aim-hint" id="aimHint">Now tap a gift box to shoot!</p>
+  </div>
+</div>
+
+<!-- ========== LETTER (Gift 1) ========== -->
+<div class="screen" id="letter">
+  <div class="letter-wrapper">
+    <div class="paper">
+      <div class="letter-hearts" id="letterHearts"></div>
+      <div class="paper-header">
+        <span class="rose">🌹</span>
+        <div class="paper-title">My Dearest Wifey</div>
+        <span class="rose">🌹</span>
+      </div>
+      <div class="letter-text" id="letterContent"></div>
+      <div class="signature">Forever yours,<br>Hubby</div>
+    </div>
+    <button class="back-btn" onclick="goHome()">← Back to Gifts</button>
+  </div>
+</div>
+
+<!-- ========== PASSWORD (Gift 2) ========== -->
+<div class="screen" id="password">
+  <div class="lock-card">
+    <div class="lock-icon-big">🔐</div>
+    <div class="lock-title">Secret Gift</div>
+    <p class="lock-hint">Enter the special code my love</p>
+    <input type="password" class="pin-input" id="pinInput" maxlength="4" inputmode="numeric" placeholder="••••" autocomplete="off">
+    <button class="pin-btn" id="pinBtn">Unlock with Love</button>
+    <p class="error-msg" id="errorMsg">Wrong code, try again</p>
+    <button class="back-btn" style="margin-top:24px; background:linear-gradient(145deg,#6b3a4a,#4a2a35);" onclick="goHome()">← Back</button>
+  </div>
+</div>
+
+<!-- ========== MESSAGE (Gift 2 content) ========== -->
+<div class="screen" id="message">
+  <div class="msg-card">
+    <div class="msg-paper">
+      <div class="msg-hearts" id="msgHearts"></div>
+      <div class="msg-title">My Sunshine</div>
+      <div class="msg-text" id="msgContent"></div>
+    </div>
+    <button class="back-btn" onclick="goHome()">← Back to Gifts</button>
+  </div>
+</div>
+
+<script>
+  // ========== LETTER TEXT ==========
+  const letterText = `hiii my dearr wifeyy , ik i didnt tell my wifey i was making this because i wanted it to be a surprise baby i sorry babyy , and baby first of all u deserve the best in the world baby ,an this  is just the beginning baby soon hubby will give my baby alotttt of reall hand written letters okk?? i have alottt of them written for u to read and i just know u will LOVEEE themm babyy,but baby its not just about the letters and this gift baby, its about u and its about seeing u happy and seeing that cutee and adorable smile on ur facce, ik my baby is having a hard week, ik these past few days have been really overwhelming for my baby , ik alot is going on but baby i dont want my baby to be reminded of it baby , now first of all i want ti tell u hw loved u aree babyy , no matter what happens u will always be loved by hubby till the end of time baby , not just in this world but in every other world and beyond baby , ur not just my girlfriend baby ur my wife and ik i dont say this enough but i want u to know that ur heart is always safe with me , u are safe with me bsby okk?? i love u with all my heart baby and i will always love u forever and ever baby, seeing that cute smile on ur face is the best and hubbby wil do anything it takes to see that cute smile on ur face baby, an yessssssssssss that smileee is the bestt babyy the way it shines iwth beauty and the way everything else around the world stop just to see that smile is thee bestt babyyy, annd not just that but those gorgeous eyesss and the way they shine when my baby smiles is thee besttt the way i get mesmerized by those eyes and the way i fall moree and moree in love iss thee besttt and the way those beautiful dark hazel eyes look when my baby is happy is something hard to describe with words because i dont think there are enough words for me to describe it babyy, and not just that baby but i wanted to also say how beautiul u aree babyy , ur not just beautiful baby ur gorgeous , ur thee mostt prettiest girll everr with thee cutestt andd thee most adorable smile , andd the worldss mostt adorablee cheekss(i justtt wantt to bitee themm ahhhhhhhhhhh)andd with thee mosttt gorgeous eyess in thee worldd andd with the worldss most beautifull hairr and mashallah the way the hair looks when my baby ccurls them and the way they shine and the way they have the wavyness is the besttt likeee ahhhhhhhhhhhhhhhhhhhhh and off course the way my baby's smile fits perfectly with those eyes iss the prettiest , u are the most gorgeous thee mostt beautifull and thee mostt prettiestt and cutee and adorablee girll everr babyy mashallah , and not just that baby ik my baby has been overthinking a bit the past few days and thats not good my baby, i just want u to know ur perfect baby okk?? ur perfect baby and i mean in every single way possible baby okk?? ur not annoying baby , ur not stupid baby, ur not a burden baby, ur not useless baby, ur mainly not a failure baby, ur not dumb, and baby ik u feel that way but ur not a disappointment to anyone baby okk??ur not a disgrace baby, ur not a bad friend baby, ur not a bad daughter baby, ur not a bad sister baby, and mainly ur not a bad girlfriend or a bad wife baby okk?? ur perfect baby , no matter who says what ur always perfect and u will always be perfect baby and i wont let those overthinking takeover baby okk?? ur perfect and thats the only truth baby okk?? and baby i want u to knwo throughout these hard times and even on the easiest ones im always here right by ur side baby okk??im not here only for the happy days baby im mainly here for all those days where my baby feels like its impossible to go through , im here for those challenges that feel hard to accomplish , im here for u baby and to help u and support u and protect u from everyone who intend to hurt u baby, ur not alone baby im here and i will always be here for u baby okk?? and baby no mattter how hard these days are i want u to know no matter who's there or not but hubby will always be here okk?? ur smart ur inteligent and ur strong and brave baby and im so so so so so so so so so so soso so so so so so so so so so so so so sooooooooo proudd of u my sweet little princess, i will always help u fight those people who keep hurting u and bothering u baby and i will make sure they wont bother u baby, ik how tired u are and ik these past few days affectedd u alot baby but baby ur always my princess and i will always make sure my princess feels better , i just want u to know that ur not alone baby u dont have to carry anything alone baby , ur pain is mine to carry also okk?? i love u so so so so so so so so so so so so sooo muchh and i always will baby, soon we will go away from all those people and we will live in our own little house filled with nothing but happiness okk?? just a bit more baby hubby promised and i will fullfill it okk?? i want my baby to smile and i want my baby to always remember that hubby will always love my baby and im not going anywhere my baby`;
+
+  const msgText = `ur my sunshine in the darkest hours, ur my moonlight in the coldest nights, ur my forever without a doubt , ur my everything with all of my heart , i love u today tommorow and forever , even on the afterlife and beyond, if my heart could speak one word it will always be one word which is maii, my sweet baby maii i love u more than nfinite and to the moon and back , and i will always make sure ur happy baby (andd yesssssss u alwayss winn my wifeyyy) smileee the biggestt and dont let anything else bother u my baby okkk?? its the best seeeing that adorable smilee my babyy`;
+
+  // ========== STATE ==========
+  let bowEquipped = false;
+  let unlocked = { 1: false, 2: false };
+
+  // ========== FLOATING DECOR ==========
+  function createFloaters() {
+    const container = document.getElementById('floaters');
+    const items = [
+      { cls: 'petal', count: 12 },
+      { cls: 'sunflower', count: 6, content: '🌻' },
+      { cls: 'arrow-deco', count: 5, content: '🏹' },
+      { cls: 'heart-float', count: 8, content: '💕' }
+    ];
+
+    items.forEach(item => {
+      for (let i = 0; i < item.count; i++) {
+        const el = document.createElement('div');
+        el.className = item.cls;
+        if (item.content) el.textContent = item.content;
+        el.style.left = Math.random() * 100 + 'vw';
+        el.style.animationDuration = (8 + Math.random() * 12) + 's';
+        el.style.animationDelay = (Math.random() * 10) + 's';
+        el.style.fontSize = item.cls === 'sunflower' ? (18 + Math.random() * 10) + 'px' : undefined;
+        container.appendChild(el);
+      }
+    });
+  }
+
+  // ========== BOW SYSTEM ==========
+  const bowBtn = document.getElementById('bowBtn');
+  const aimHint = document.getElementById('aimHint');
+
+  bowBtn.addEventListener('click', () => {
+    bowEquipped = !bowEquipped;
+    if (bowEquipped) {
+      bowBtn.classList.add('active');
+      bowBtn.innerHTML = '🏹 Bow Ready!';
+      aimHint.classList.add('show');
+    } else {
+      bowBtn.classList.remove('active');
+      bowBtn.innerHTML = '🏹 Equip Cupid Bow';
+      aimHint.classList.remove('show');
+    }
+  });
+
+  // Gift box clicks
+  document.querySelectorAll('.gift-box').forEach(box => {
+    box.addEventListener('click', (e) => {
+      const id = box.dataset.gift;
+
+      if (!unlocked[id]) {
+        if (!bowEquipped) {
+          // gentle shake
+          box.style.animation = 'none';
+          box.offsetHeight;
+          box.style.animation = 'unlockPulse 0.4s ease';
+          return;
+        }
+        // Shoot arrow
+        shootArrow(box, () => {
+          unlocked[id] = true;
+          box.classList.remove('locked');
+          box.classList.add('unlocked');
+          box.querySelector('.lock-icon').style.display = 'none';
+          // small delay then open
+          setTimeout(() => openGift(id), 600);
+        });
+      } else {
+        openGift(id);
+      }
+    });
+  });
+
+  function shootArrow(target, callback) {
+    const arrow = document.createElement('div');
+    arrow.className = 'arrow';
+    arrow.textContent = '💘';
+    document.body.appendChild(arrow);
+
+    const startX = window.innerWidth / 2;
+    const startY = window.innerHeight - 80;
+    const rect = target.getBoundingClientRect();
+    const endX = rect.left + rect.width / 2;
+    const endY = rect.top + rect.height / 2;
+
+    arrow.style.left = startX + 'px';
+    arrow.style.top = startY + 'px';
+    arrow.style.transform = 'translate(-50%, -50%) rotate(-20deg)';
+
+    requestAnimationFrame(() => {
+      arrow.style.left = endX + 'px';
+      arrow.style.top = endY + 'px';
+      arrow.style.transform = 'translate(-50%, -50%) rotate(15deg) scale(1.3)';
+    });
+
+    setTimeout(() => {
+      arrow.remove();
+      callback();
+    }, 850);
+  }
+
+  function openGift(id) {
+    if (id === '1') {
+      showScreen('letter');
+      typeLetter();
+      spawnLetterHearts();
+    } else {
+      showScreen('password');
+      document.getElementById('pinInput').value = '';
+      document.getElementById('errorMsg').classList.remove('show');
+    }
+  }
+
+  // ========== SCREENS ==========
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    // change body vibe a bit
+    if (id === 'letter') {
+      document.body.style.background = 'linear-gradient(180deg, #2c1810, #4a2c1a)';
+    } else if (id === 'message') {
+      document.body.style.background = 'linear-gradient(180deg, #2a0a1f, #4a1a35)';
+    } else {
+      document.body.style.background = 'linear-gradient(135deg, #1a0a14 0%, #3d1a2e 40%, #5c2a45 100%)';
+    }
+  }
+
+  function goHome() {
+    showScreen('home');
+    bowEquipped = false;
+    bowBtn.classList.remove('active');
+    bowBtn.innerHTML = '🏹 Equip Cupid Bow';
+    aimHint.classList.remove('show');
+  }
+
+  // ========== LETTER TYPING ==========
+  function typeLetter() {
+    const el = document.getElementById('letterContent');
+    el.innerHTML = '';
+    // break into paragraphs for better readability
+    const paragraphs = letterText.split(/(?<=\.)\s+(?=[a-z])/i).filter(p => p.trim());
+    // simpler: just put the whole thing with line breaks preserved
+    el.style.whiteSpace = 'pre-wrap';
+    el.textContent = letterText;
+  }
+
+  function spawnLetterHearts() {
+    const container = document.getElementById('letterHearts');
+    container.innerHTML = '';
+    for (let i = 0; i < 10; i++) {
+      const h = document.createElement('div');
+      h.textContent = ['💕','💗','💖','🌸','✨'][Math.floor(Math.random()*5)];
+      h.style.cssText = `
+        position:absolute;
+        left:${Math.random()*90}%;
+        top:${Math.random()*90}%;
+        font-size:${12 + Math.random()*10}px;
+        opacity:0.5;
+        animation: floatUp ${6 + Math.random()*6}s linear infinite;
+        animation-delay:${Math.random()*4}s;
+      `;
+      container.appendChild(h);
+    }
+  }
+
+  // ========== PASSWORD ==========
+  document.getElementById('pinBtn').addEventListener('click', checkPin);
+  document.getElementById('pinInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter') checkPin();
+  });
+
+  function checkPin() {
+    const val = document.getElementById('pinInput').value.trim();
+    if (val === '1031') {
+      document.getElementById('msgContent').textContent = msgText;
+      showScreen('message');
+      spawnMsgHearts();
+    } else {
+      const err = document.getElementById('errorMsg');
+      err.classList.add('show');
+      document.getElementById('pinInput').value = '';
+      setTimeout(() => err.classList.remove('show'), 2000);
+    }
+  }
+
+  function spawnMsgHearts() {
+    const container = document.getElementById('msgHearts');
+    container.innerHTML = '';
+    for (let i = 0; i < 14; i++) {
+      const h = document.createElement('div');
+      h.textContent = ['💕','💗','💖','❤️','✨','🌸'][Math.floor(Math.random()*6)];
+      h.style.cssText = `
+        position:absolute;
+        left:${Math.random()*95}%;
+        top:${Math.random()*95}%;
+        font-size:${14 + Math.random()*12}px;
+        opacity:0.55;
+        animation: floatUp ${5 + Math.random()*7}s linear infinite;
+        animation-delay:${Math.random()*3}s;
+      `;
+      container.appendChild(h);
+    }
+  }
+
+  // Init
+  createFloaters();
+</script>
+</body>
+</html>
